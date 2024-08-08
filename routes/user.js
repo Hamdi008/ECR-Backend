@@ -1,6 +1,6 @@
 const express = require("express");
 const User = require("../models/user");// import the User model
-
+const bcrypt = require("bcrypt");
 const router = express.Router();
 
 //addUser API
@@ -15,6 +15,28 @@ router.post("/addUser", async(req,res)=>{
     } catch (error) {
         res.status(400).send(error)
     }
+});
+
+
+router.post("/register", async (req,res)=>{
+    data = req.body;
+    user = new User(data);
+    
+    salt = bcrypt.genSaltSync(10);
+    cryptedPassword = await bcrypt.hashSync(data.password, salt);
+    user.password = cryptedPassword;
+
+    user.save()
+        .then(
+            (savedData)=>{
+                res.status(200).send(savedData);
+            }
+        )
+        .catch(
+            (error)=>{
+                res.status(400).send(error)
+            }
+        )
 });
 
 //getUsers API

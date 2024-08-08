@@ -6,6 +6,9 @@ const User = mongoose.model("User",{
     },
     email:{
         type: String
+    },
+    password:{
+        type: String
     }
 })
 
