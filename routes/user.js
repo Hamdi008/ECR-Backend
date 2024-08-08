@@ -2,6 +2,7 @@ const express = require("express");
 const User = require("../models/user");// import the User model
 const bcrypt = require("bcrypt");
 const router = express.Router();
+const jwt = require("jsonwebtoken")
 
 //addUser API
 router.post("/addUser", async(req,res)=>{
@@ -21,7 +22,7 @@ router.post("/addUser", async(req,res)=>{
 router.post("/register", async (req,res)=>{
     data = req.body;
     user = new User(data);
-    
+
     salt = bcrypt.genSaltSync(10);
     cryptedPassword = await bcrypt.hashSync(data.password, salt);
     user.password = cryptedPassword;
@@ -38,6 +39,32 @@ router.post("/register", async (req,res)=>{
             }
         )
 });
+
+//login API
+router.post("/login", async (req,res)=>{
+    
+    data = req.body;
+    user = await User.findOne({email: data.email})
+
+    if(!user){
+        res.status(404).send("email or password invalid!");
+    }else{
+        validPassword = bcrypt.compareSync(data.password, user.password)
+        
+        if(!validPassword){
+            res.status(401).send("email or password invalid!");
+        }else{
+            // object to be send to fronend, you can add what you want.
+            paylod = {
+                _id: user._id,
+                email: user.email,
+                name: user.fullname
+            }
+            token = jwt.sign(paylod, "12345678")// "12345678" is the secret password only for dev 
+            res.status(200).send({myToken: token})
+        }
+    }
+})
 
 //getUsers API
 router.get("/getUsers", async(req,res)=>{
