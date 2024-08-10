@@ -114,4 +114,15 @@ router.delete("/deleteUserById/:id", async(req,res)=>{
     }
 });
 
+router.delete("/deleteAll",async(req,res)=>{
+    
+    try {
+        const result = await User.deleteMany();
+        console.log("${result.deletedCount} deleted items.");
+        res.status(200).send();
+    } catch (error) {
+        res.status(400).send(error);
+    }
+});
+
 module.exports = router;
