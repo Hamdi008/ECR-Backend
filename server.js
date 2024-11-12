@@ -2,6 +2,7 @@ const express = require('express');// import express framework
 require("./config/connect");//import connect.js
 const userRouter = require("./routes/user")
 const cors = require('cors');  // Import the cors package
+const port = 3000;
 
 const app = express();
 // this is to allow the server to read json data
@@ -17,6 +18,6 @@ app.use(cors({
 //http://127.0.0.1:3000/user/
 app.use("/user", userRouter);
 
-app.listen( 3000, ()=>{
+app.listen( port, ()=>{
     console.log("server running...")
 });
